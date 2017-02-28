@@ -3,6 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>abapOpenFix</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.23.1/babel.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react-router/3.0.2/ReactRouter.js"></script>    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/history/2.1.2/History.min.js"></script>
+    <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.css">
+    <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/addon/merge/merge.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/theme/seti.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/addon/merge/merge.js"></script>
+    <script type="text/javascript" src="/sap/zabapopenfix/static/abap.js"></script>
     <style>
     body {
       font-family: sans-serif;
@@ -18,13 +31,13 @@
     table, th, td {
       border: 1px solid black;
     }
+    .CodeMirror {
+      line-height: 1.2;
+    }
+    .CodeMirror-merge-l-chunk {
+      background: #303030;
+    }
     </style>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.23.1/babel.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react-router/3.0.2/ReactRouter.js"></script>    
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/history/2.1.2/History.min.js"></script>
   </head>
   <body>
     <div id="app"></div>

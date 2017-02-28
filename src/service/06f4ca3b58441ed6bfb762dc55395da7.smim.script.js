@@ -42,6 +42,42 @@ class NoMatch extends React.Component {
   }
 }
 
+class Editor extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {id: "view"};
+  }
+
+  initCM() {
+    var target = document.getElementById("view");
+    target.innerHTML = "";
+    let cm = CodeMirror.MergeView(target, {
+      value: this.props.change.CODE_AFTER,
+      origLeft: this.props.change.CODE_BEFORE,
+      lineNumbers: true,
+      mode: "abap",
+      tabSize: 2,
+      theme: "seti",
+      highlightDifferences: true,
+      connect: null,
+     collapseIdentical: false
+    });
+  }
+
+  componentDidMount() {
+    this.initCM();
+  }
+
+  render() {
+    return (
+      <div>
+      {this.props.change.SOBJTYPE} {this.props.change.SOBJNAME}
+      <div id={this.state.id}>Editor</div>
+      </div>);
+  }
+}
+
 class Run extends React.Component {
   constructor(props) {
     super(props);
@@ -53,12 +89,19 @@ class Run extends React.Component {
     this.setState({data: d});
   }
 
+// todo, multiple editors
   renderResponse(data) {
     return (<div>
-      {data.MESSAGE}
+      {data.MESSAGE}<br />
+      {data.STATUS}<br />
+      {data.MESSAGE}<br />
+      {data.DESCRIPTION}<br />
+      {data.OBJTYPE}<br />
+      {data.OBJNAME}<br />
       <br />
+      <Editor change={data.CHANGES[0]} />
       <br />
-      <b>Next Button!</b>
+      <b>Next Button</b>
       </div>);
   }
 

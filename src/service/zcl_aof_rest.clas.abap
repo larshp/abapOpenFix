@@ -75,6 +75,9 @@ CLASS ZCL_AOF_REST IMPLEMENTATION.
 
     rs_data-status = 'S'.
     rs_data-message = 'Foobar'.
+    rs_data-description = 'EXPORTING can be omitted'.
+    rs_data-objtype = 'PROG'.
+    rs_data-objname = 'ZFOOBAR'.
 
     APPEND INITIAL LINE TO rs_data-changes ASSIGNING <ls_change>.
     <ls_change>-sobjtype = 'REPS'.
