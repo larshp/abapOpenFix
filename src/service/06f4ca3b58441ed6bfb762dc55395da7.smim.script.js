@@ -24,6 +24,10 @@ class REST {
     this.get("tasks/" + worklist, callback);
   }
 
+  static runTask(worklist, task, callback) {
+    this.get("tasks/" + worklist + "/" + task, callback);
+  }
+
   static get(folder, callback, json = true) {
     let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", (evt) => { handleError(evt, callback, json); });
@@ -38,16 +42,79 @@ class NoMatch extends React.Component {
   }
 }
 
+class Run extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {data: null};
+    REST.runTask(props.params.worklist, this.props.params.task, this.update.bind(this));
+  }
+
+  update(d) {
+    this.setState({data: d});
+  }
+
+  renderResponse(data) {
+    return (<div>
+      {data.MESSAGE}
+      <br />
+      <br />
+      <b>Next Button!</b>
+      </div>);
+  }
+
+  render() {
+    return (
+      <div>
+      <h1>Run</h1>
+      Worklist: {this.props.params.worklist}<br />
+      Task: {this.props.params.task}<br />
+      <br />
+      {this.state.data?this.renderResponse(this.state.data):"loading"}
+      </div>);
+  }
+}
+
 class TaskList extends React.Component {
-  constructor() {
-    super();
-  }     
+  constructor(props) {
+    super(props);
+    this.state = {data: null};
+    REST.listTasks(props.params.worklist, this.update.bind(this));
+  }
+
+  update(d) {
+    this.setState({data: d});
+  }
+
+  task(e) {
+    return (
+      <tr>
+        <td>{e.OBJTYPE}</td>
+        <td>{e.OBJNAME}</td>
+        <td>{e.DESCRIPTION}</td>
+        <td>{e.COUNTER}</td>
+        <td><Link to={"/tasks/"+e.WORKLIST+"/"+e.TASK}>Run</Link></td>
+      </tr>);
+  }   
+
+  table(data) {
+    return (
+      <table>
+      <tr>
+      <td><b>Type</b></td>
+      <td><b>Name</b></td>
+      <td><b>Description</b></td>
+      <td><b>Count</b></td>
+      <td></td>
+      </tr>
+      {data.map(this.task)}
+      </table>);
+  }  
       
   render() {
     return (
       <div>
       <h1>Tasks</h1>
-      foobar
+      {this.state.data?this.table(this.state.data):"loading"}
       </div>);
   }
 }
@@ -55,12 +122,12 @@ class TaskList extends React.Component {
 class WorklistList extends React.Component {
   constructor() {
     super();
-    this.state = {data: [], spinner: true};
+    this.state = {data: null};
     REST.listWorklists(this.update.bind(this));
-  }     
+  }
 
   update(d) {
-    this.setState({data: d, spinner: false});
+    this.setState({data: d});
   }
 
   worklist(e) {
@@ -74,7 +141,7 @@ class WorklistList extends React.Component {
     return (
       <div>
       <h1>abapOpenFix</h1>
-      {this.state.spinner?"loading":this.state.data.map(this.worklist)}
+      {this.state.data?this.state.data.map(this.worklist):"loading"}
       <br />
       <br />
       <a href={base + "/rest/swagger.html"}>swagger</a>
@@ -91,7 +158,12 @@ class Router extends React.Component {
       <ReactRouter.Router history={history} >
         <ReactRouter.Route path="/">
           <ReactRouter.IndexRoute component={WorklistList} />
-          <ReactRouter.Route path="tasks/:worklist" component={TaskList} />
+          <ReactRouter.Route path="tasks/:worklist">
+            <ReactRouter.IndexRoute component={TaskList} />
+            <ReactRouter.Route path=":task">
+              <ReactRouter.IndexRoute component={Run} />
+            </ReactRouter.Route>
+          </ReactRouter.Route>
         </ReactRouter.Route>
         <ReactRouter.Route path="*" component={NoMatch} />
       </ReactRouter.Router>);

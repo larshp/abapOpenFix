@@ -26,6 +26,12 @@
      <ENTRY>List Tasks</ENTRY>
      <LENGTH>20</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>003</KEY>
+     <ENTRY>Run Task</ENTRY>
+     <LENGTH>18</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>
