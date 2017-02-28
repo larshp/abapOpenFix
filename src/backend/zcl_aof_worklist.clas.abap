@@ -27,7 +27,7 @@ CLASS ZCL_AOF_WORKLIST IMPLEMENTATION.
                    <ls_result> LIKE LINE OF lt_results.
 
 
-    ls_worklist-worklist = cl_system_uuid=>if_system_uuid_static~create_uuid_c22( ).
+    ls_worklist-worklist = cl_system_uuid=>if_system_uuid_static~create_uuid_c26( ).
     ls_worklist-description = is_data-description.
     ls_worklist-object_set = is_data-object_set.
     ls_worklist-check_variant = is_data-check_variant.
