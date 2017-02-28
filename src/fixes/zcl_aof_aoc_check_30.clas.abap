@@ -19,4 +19,11 @@ CLASS ZCL_AOF_AOC_CHECK_30 IMPLEMENTATION.
     rv_fixable = boolc( is_result-test = 'ZCL_AOC_CHECK_30' ).
 
   ENDMETHOD.
+
+
+  METHOD zif_aof_fixer~run.
+
+* todo
+
+  ENDMETHOD.
 ENDCLASS.
