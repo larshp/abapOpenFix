@@ -25,11 +25,6 @@ protected section.
       !IO_OBJECT_SET type ref to CL_CI_OBJECTSET
     returning
       value(RO_INSPECTION) type ref to CL_CI_INSPECTION .
-  class-methods RESULTS
-    importing
-      !IO_INSPECTION type ref to CL_CI_INSPECTION
-    returning
-      value(RT_RESULTS) type SCIT_ALVLIST .
   class-methods GET_OBJECT_SET
     importing
       !IV_OBJECTSET type SCI_OBJS
@@ -46,6 +41,11 @@ protected section.
       !IV_VARIANT type SCI_CHKV
     returning
       value(RO_VARIANT) type ref to CL_CI_CHECKVARIANT .
+  class-methods RESULTS
+    importing
+      !IO_INSPECTION type ref to CL_CI_INSPECTION
+    returning
+      value(RT_RESULTS) type SCIT_ALVLIST .
 private section.
 ENDCLASS.
 
@@ -163,8 +163,7 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
 
     DELETE rt_results WHERE objtype = 'STAT'.
 
-* todo, delete generated inspections and object sets?
-*       alternatlivey find a way not to save it
+    io_inspection->delete( ).
 
   ENDMETHOD.
 
@@ -213,6 +212,8 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
       io_object_set = lo_object_set ).
 
     rt_results = results( lo_ci ).
+
+    lo_object_set->delete( ).
 
   ENDMETHOD.
 ENDCLASS.

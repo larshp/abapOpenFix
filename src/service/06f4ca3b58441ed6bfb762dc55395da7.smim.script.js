@@ -12,7 +12,7 @@ function handleError(evt, callback, json) {
     alert("REST call failed, status: " + evt.target.status);
   }
 }
-
+ 
 class REST {
   static root = base + "/rest/";
 
@@ -101,29 +101,24 @@ class Run extends React.Component {
     return (<Editor change={c} />);
   }
 
-// todo, multiple editors
+  save(e) {
+    e.preventDefault();
+    alert("save, todo");
+  }
+
   renderResponse(data) {
     return (<div>
-      {data.MESSAGE}<br />
-      {data.STATUS}<br />
-      {data.MESSAGE}<br />
-      {data.DESCRIPTION}<br />
-      {data.OBJTYPE}<br />
-      {data.OBJNAME}<br />
+      <h1>{data.OBJTYPE} {data.OBJNAME}</h1>
+      <i>{data.DESCRIPTION}</i><br />
       <br />
       {data.CHANGES.map(this.editor)}
-      <br />
-      <b>Next Button</b>
+      <div className="right"><h1><a href="#" onClick={this.save}>Save</a></h1></div>
       </div>);
   }
 
   render() {
     return (
       <div>
-      <h1>Run</h1>
-      Worklist: {this.props.params.worklist}<br />
-      Task: {this.props.params.task}<br />
-      <br />
       {this.state.data?this.renderResponse(this.state.data):"loading"}
       </div>);
   }
@@ -196,6 +191,8 @@ class WorklistList extends React.Component {
     return (
       <div>
       <h1>abapOpenFix</h1>
+      <br />
+      <u>Worklists</u><br />
       {this.state.data?this.state.data.map(this.worklist):"loading"}
       <br />
       <br />

@@ -1,4 +1,4 @@
-REPORT zaof_build_worklist.
+REPORT zaof_worklist_create.
 
 PARAMETERS: p_des TYPE zaof_worklists-description OBLIGATORY,
             p_set TYPE zaof_worklists-object_set OBLIGATORY,

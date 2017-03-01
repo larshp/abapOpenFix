@@ -1,12 +1,15 @@
-CLASS zcl_aof_worklist DEFINITION
-  PUBLIC
-  CREATE PUBLIC .
+class ZCL_AOF_WORKLIST definition
+  public
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    CLASS-METHODS create
-      IMPORTING
-        !is_data TYPE zaof_worklists_data .
+  class-methods DELETE
+    importing
+      !IV_WORKLIST type ZAOF_WORKLISTS-WORKLIST .
+  class-methods CREATE
+    importing
+      !IS_DATA type ZAOF_WORKLISTS_DATA .
 protected section.
 private section.
 ENDCLASS.
@@ -70,6 +73,14 @@ CLASS ZCL_AOF_WORKLIST IMPLEMENTATION.
     ASSERT sy-subrc = 0.
     INSERT zaof_tasks FROM TABLE lt_tasks.
     ASSERT sy-subrc = 0.
+
+  ENDMETHOD.
+
+
+  METHOD delete.
+
+    DELETE FROM zaof_worklists WHERE worklist = iv_worklist.
+    DELETE FROM zaof_tasks WHERE worklist = iv_worklist.
 
   ENDMETHOD.
 ENDCLASS.

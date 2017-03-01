@@ -38,15 +38,13 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
                    <ls_change> LIKE LINE OF rs_data-changes.
 
 
-* todo, fill fields with proper values
-    rs_data-status      = 'S'.
-    rs_data-message     = 'Message'.
-    rs_data-description = 'Description'.
-    rs_data-objtype     = is_task-objtype.
-    rs_data-objname     = is_task-objname.
-    rs_data-results     = it_results.
+    rs_data-objtype = is_task-objtype.
+    rs_data-objname = is_task-objname.
+    rs_data-results = it_results.
 
     LOOP AT it_results ASSIGNING <ls_result>.
+      rs_data-description = <ls_result>-description.
+
       READ TABLE rs_data-changes WITH KEY
         sobjtype = <ls_result>-sobjtype
         sobjname = <ls_result>-sobjname

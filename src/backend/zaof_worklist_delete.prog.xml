@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>ZAOF_BUILD_WORKLIST</NAME>
+    <NAME>ZAOF_WORKLIST_DELETE</NAME>
     <STATE>A</STATE>
     <VARCL>X</VARCL>
     <SUBC>1</SUBC>
@@ -21,35 +21,14 @@
     </item>
     <item>
      <ID>R</ID>
-     <ENTRY>Program ZAOF_BUILD_WORKLIST</ENTRY>
+     <ENTRY>Delete worklist</ENTRY>
      <LENGTH>27</LENGTH>
     </item>
     <item>
      <ID>S</ID>
-     <KEY>P_CHK</KEY>
+     <KEY>P_WORK</KEY>
      <ENTRY>.</ENTRY>
-     <LENGTH>21</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_DES</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>12</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_SET</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>18</LENGTH>
-     <SPLIT>D</SPLIT>
-    </item>
-    <item>
-     <ID>S</ID>
-     <KEY>P_VER</KEY>
-     <ENTRY>.</ENTRY>
-     <LENGTH>22</LENGTH>
+     <LENGTH>9</LENGTH>
      <SPLIT>D</SPLIT>
     </item>
    </TPOOL>

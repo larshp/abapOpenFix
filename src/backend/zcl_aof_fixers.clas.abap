@@ -53,17 +53,33 @@ CLASS ZCL_AOF_FIXERS IMPLEMENTATION.
 
   METHOD find_fixer_classes.
 
+    DATA: ls_fixer TYPE ty_fixer,
+          ls_key   TYPE seoclskey,
+          lt_keys  TYPE seor_implementing_keys.
+
+    FIELD-SYMBOLS: <ls_key> LIKE LINE OF lt_keys.
+
+
     CLEAR gt_fixers.
 
-* todo, find all classes implementing ZIF_AOF_FIXER
-* todo, only those without subclasses and not abstract
+    ls_key-clsname = 'ZIF_AOF_FIXER'.
 
-    DATA: ls_fixer TYPE ty_fixer.
+    CALL FUNCTION 'SEO_INTERFACE_IMPLEM_GET_ALL'
+      EXPORTING
+        intkey       = ls_key
+      IMPORTING
+        impkeys      = lt_keys
+      EXCEPTIONS
+        not_existing = 1
+        OTHERS       = 2.
+    ASSERT sy-subrc = 0.
 
-    CREATE OBJECT ls_fixer-ref TYPE zcl_aof_aoc_check_30.
-    ls_fixer-name = 'ZCL_AOF_AOC_CHECK_30'.
-
-    APPEND ls_fixer TO gt_fixers.
+    LOOP AT lt_keys ASSIGNING <ls_key>.
+      CLEAR ls_fixer.
+      CREATE OBJECT ls_fixer-ref TYPE (<ls_key>-clsname).
+      ls_fixer-name = <ls_key>-clsname.
+      APPEND ls_fixer TO gt_fixers.
+    ENDLOOP.
 
   ENDMETHOD.
 ENDCLASS.
