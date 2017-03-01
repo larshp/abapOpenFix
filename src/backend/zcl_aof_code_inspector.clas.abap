@@ -35,7 +35,7 @@ protected section.
       !IV_OBJECTSET type SCI_OBJS
     returning
       value(RO_OBJECTSET) type ref to CL_CI_OBJECTSET .
-  class-methods GET_SINGLE_OBJECT
+  class-methods GET_OBJECT_SET_SINGLE
     importing
       !IV_OBJTYPE type SCI_TYPID
       !IV_OBJNAME type SOBJ_NAME
@@ -106,7 +106,7 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_single_object.
+  METHOD GET_OBJECT_SET_SINGLE.
 
     DATA: lt_objects TYPE scit_objs.
 
@@ -117,9 +117,11 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
     <ls_object>-objtype = iv_objtype.
     <ls_object>-objname = iv_objname.
 
+* todo: set deletion date?
     cl_ci_objectset=>save_from_list(
       EXPORTING
         p_user              = ''
+        p_name              = 'ABAPOPENFIX'
         p_objects           = lt_objects
       RECEIVING
         p_ref               = ro_objectset
@@ -161,6 +163,9 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
 
     DELETE rt_results WHERE objtype = 'STAT'.
 
+* todo, delete generated inspections and object sets?
+*       alternatlivey find a way not to save it
+
   ENDMETHOD.
 
 
@@ -196,9 +201,10 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
           lo_object_set TYPE REF TO cl_ci_objectset.
 
 
+* todo, only run for 1 test?
     lo_variant = get_variant( iv_variant ).
 
-    lo_object_set = get_single_object(
+    lo_object_set = get_object_set_single(
       iv_objtype = iv_objtype
       iv_objname = iv_objname ).
 

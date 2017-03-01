@@ -15,8 +15,15 @@ protected section.
   class-methods FILL_DATA
     importing
       !IT_RESULTS type SCIT_ALVLIST
+      !IS_TASK type ZAOF_TASKS
     returning
       value(RS_DATA) type ZAOF_RUN_DATA .
+  class-methods READ_SOURCE
+    importing
+      !IV_SOBJTYPE type SCI_TYPID
+      !IV_SOBJNAME type SOBJ_NAME
+    returning
+      value(RT_SOURCE) type STRING_TABLE .
 private section.
 ENDCLASS.
 
@@ -25,8 +32,67 @@ ENDCLASS.
 CLASS ZCL_AOF_TASK IMPLEMENTATION.
 
 
-  method FILL_DATA.
-  endmethod.
+  METHOD fill_data.
+
+    FIELD-SYMBOLS: <ls_result> LIKE LINE OF it_results,
+                   <ls_change> LIKE LINE OF rs_data-changes.
+
+
+* todo, fill fields with proper values
+    rs_data-status      = 'S'.
+    rs_data-message     = 'Message'.
+    rs_data-description = 'Description'.
+    rs_data-objtype     = is_task-objtype.
+    rs_data-objname     = is_task-objname.
+    rs_data-results     = it_results.
+
+    LOOP AT it_results ASSIGNING <ls_result>.
+      READ TABLE rs_data-changes WITH KEY
+        sobjtype = <ls_result>-sobjtype
+        sobjname = <ls_result>-sobjname
+        TRANSPORTING NO FIELDS.
+      IF sy-subrc <> 0.
+        APPEND INITIAL LINE TO rs_data-changes ASSIGNING <ls_change>.
+        <ls_change>-sobjtype = <ls_result>-sobjtype.
+        <ls_change>-sobjname = <ls_result>-sobjname.
+
+        <ls_change>-code_before = read_source(
+          iv_sobjtype = <ls_change>-sobjtype
+          iv_sobjname = <ls_change>-sobjname ).
+
+        <ls_change>-code_after = <ls_change>-code_before.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD read_source.
+
+    DATA: lt_source TYPE abaptxt255_tab.
+
+
+    CASE iv_sobjtype.
+      WHEN 'PROG'.
+        CALL FUNCTION 'RPY_PROGRAM_READ'
+          EXPORTING
+            program_name     = iv_sobjname
+            with_lowercase   = abap_true
+          TABLES
+            source_extended  = lt_source
+          EXCEPTIONS
+            cancelled        = 1
+            not_found        = 2
+            permission_error = 3
+            OTHERS           = 4.
+        ASSERT sy-subrc = 0.
+      WHEN OTHERS.
+        ASSERT 0 = 1.
+    ENDCASE.
+
+    rt_source = lt_source.
+
+  ENDMETHOD.
 
 
   METHOD run.
@@ -52,7 +118,7 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
         iv_objtype = ls_task-objtype
         iv_objname = ls_task-objname ).
 
-    LOOP AT lt_results ASSIGNING <ls_result>.
+    LOOP AT lt_results ASSIGNING <ls_result> WHERE test = ls_task-test.
       lv_class = zcl_aof_fixers=>find_fixer( <ls_result> ).
       IF lv_class = ls_task-fixer.
         APPEND <ls_result> TO lt_final.
@@ -60,7 +126,9 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
     ENDLOOP.
     CLEAR lt_results.
 
-    rs_data = fill_data( lt_final ).
+    rs_data = fill_data(
+      is_task    = ls_task
+      it_results = lt_final ).
 
     CREATE OBJECT li_fixer TYPE (ls_task-fixer).
     rs_data = li_fixer->run( rs_data ).

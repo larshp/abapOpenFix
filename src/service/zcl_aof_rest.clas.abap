@@ -68,22 +68,24 @@ CLASS ZCL_AOF_REST IMPLEMENTATION.
 
   METHOD run_task.
 
-* todo, call backend
+    rs_data = zcl_aof_task=>run(
+      iv_worklist = iv_worklist
+      iv_task     = iv_task ).
 
-    FIELD-SYMBOLS: <ls_change> LIKE LINE OF rs_data-changes.
-
-
-    rs_data-status = 'S'.
-    rs_data-message = 'Foobar'.
-    rs_data-description = 'EXPORTING can be omitted'.
-    rs_data-objtype = 'PROG'.
-    rs_data-objname = 'ZFOOBAR'.
-
-    APPEND INITIAL LINE TO rs_data-changes ASSIGNING <ls_change>.
-    <ls_change>-sobjtype = 'REPS'.
-    <ls_change>-sobjname = 'ZFOOBAR'.
-    <ls_change>-code_before = |REPORT zfoo.|.
-    <ls_change>-code_after = |REPORT zfoo.\nWRITE 'Hello World'.|.
+*    FIELD-SYMBOLS: <ls_change> LIKE LINE OF rs_data-changes.
+*
+*
+*    rs_data-status = 'S'.
+*    rs_data-message = 'Foobar'.
+*    rs_data-description = 'EXPORTING can be omitted'.
+*    rs_data-objtype = 'PROG'.
+*    rs_data-objname = 'ZFOOBAR'.
+*
+*    APPEND INITIAL LINE TO rs_data-changes ASSIGNING <ls_change>.
+*    <ls_change>-sobjtype = 'REPS'.
+*    <ls_change>-sobjname = 'ZFOOBAR'.
+*    <ls_change>-code_before = |REPORT zfoo.|.
+*    <ls_change>-code_after = |REPORT zfoo.\nWRITE 'Hello World'.|.
 
   ENDMETHOD.
 

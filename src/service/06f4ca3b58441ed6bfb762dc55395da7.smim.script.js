@@ -42,26 +42,33 @@ class NoMatch extends React.Component {
   }
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 class Editor extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {id: "view"};
+// todo, use a prop for numbering?
+    this.state = {id: "view" + getRandomInt(1, 999)};
   }
 
   initCM() {
-    var target = document.getElementById("view");
+    var target = document.getElementById(this.state.id);
     target.innerHTML = "";
     let cm = CodeMirror.MergeView(target, {
-      value: this.props.change.CODE_AFTER,
-      origLeft: this.props.change.CODE_BEFORE,
+      value: this.props.change.CODE_AFTER.join("\n"),
+      origLeft: this.props.change.CODE_BEFORE.join("\n"),
       lineNumbers: true,
       mode: "abap",
       tabSize: 2,
       theme: "seti",
       highlightDifferences: true,
       connect: null,
-     collapseIdentical: false
+      collapseIdentical: true
     });
   }
 
@@ -74,6 +81,7 @@ class Editor extends React.Component {
       <div>
       {this.props.change.SOBJTYPE} {this.props.change.SOBJNAME}
       <div id={this.state.id}>Editor</div>
+      <br />
       </div>);
   }
 }
@@ -89,6 +97,10 @@ class Run extends React.Component {
     this.setState({data: d});
   }
 
+  editor(c) {
+    return (<Editor change={c} />);
+  }
+
 // todo, multiple editors
   renderResponse(data) {
     return (<div>
@@ -99,7 +111,7 @@ class Run extends React.Component {
       {data.OBJTYPE}<br />
       {data.OBJNAME}<br />
       <br />
-      <Editor change={data.CHANGES[0]} />
+      {data.CHANGES.map(this.editor)}
       <br />
       <b>Next Button</b>
       </div>);
