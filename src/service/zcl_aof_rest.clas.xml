@@ -32,6 +32,12 @@
      <ENTRY>Run Task</ENTRY>
      <LENGTH>18</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>004</KEY>
+     <ENTRY>Save Task</ENTRY>
+     <LENGTH>19</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>

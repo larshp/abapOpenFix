@@ -28,11 +28,22 @@ class REST {
     this.get("tasks/" + worklist + "/" + task, callback);
   }
 
+  static saveTask(worklist, task, data, callback) {
+    this.post("tasks/" + worklist + "/" + task, data, callback);
+  }
+
   static get(folder, callback, json = true) {
     let oReq = new XMLHttpRequest();
     oReq.addEventListener("load", (evt) => { handleError(evt, callback, json); });
     oReq.open("GET", this.root + folder);
     oReq.send();
+  }
+
+  static post(folder, data, callback, json = true) {
+    let oReq = new XMLHttpRequest();
+    oReq.addEventListener("load", (evt) => { handleError(evt, callback, json); });
+    oReq.open("POST", this.root + folder);
+    oReq.send(JSON.stringify(data));
   }
 }
 
@@ -52,8 +63,11 @@ class Editor extends React.Component {
 
   constructor(props) {
     super(props);
-// todo, use a prop for numbering?
-    this.state = {id: "view" + getRandomInt(1, 999)};
+    this.state = {id: "view" + props.index};
+  }
+
+  changesCM(cm) {
+    this.props.callback(this.props.index, cm.getValue());
   }
 
   initCM() {
@@ -70,6 +84,7 @@ class Editor extends React.Component {
       connect: null,
       collapseIdentical: true
     });
+    cm.edit.on("changes", this.changesCM.bind(this));
   }
 
   componentDidMount() {
@@ -95,14 +110,25 @@ class Run extends React.Component {
 
   update(d) {
     this.setState({data: d});
+    this.save = d;
   }
 
-  editor(c) {
-    return (<Editor change={c} />);
+  setCodeAfter(index, value) {
+// do not update the state, as this will cause child elements to re-render
+    this.save.CHANGES[index].CODE_AFTER = value.split("\n");
+  }
+
+  editor(change, index) {
+    return (<Editor 
+        key={index} 
+        index={index} 
+        change={change} 
+        callback={this.setCodeAfter.bind(this)}/>);
   }
 
   save(e) {
     e.preventDefault();
+    REST.saveTask(this.props.params.worklist, this.props.params.task, this.save, function(val) {console.dir("todo " + val);});
     alert("save, todo");
   }
 
@@ -111,8 +137,8 @@ class Run extends React.Component {
       <h1>{data.OBJTYPE} {data.OBJNAME}</h1>
       <i>{data.DESCRIPTION}</i><br />
       <br />
-      {data.CHANGES.map(this.editor)}
-      <div className="right"><h1><a href="#" onClick={this.save}>Save</a></h1></div>
+      {data.CHANGES.map(this.editor.bind(this))}
+      <div className="right"><h1><a href="#" onClick={this.save.bind(this)}>Save</a></h1></div>
       </div>);
   }
 
