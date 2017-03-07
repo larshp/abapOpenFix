@@ -126,10 +126,13 @@ class Run extends React.Component {
         callback={this.setCodeAfter.bind(this)}/>);
   }
 
+  saveCallback(val) {
+    alert("save, todo, response: " + val);
+  }
+
   save(e) {
     e.preventDefault();
-    REST.saveTask(this.props.params.worklist, this.props.params.task, this.save, function(val) {console.dir("todo " + val);});
-    alert("save, todo");
+    REST.saveTask(this.props.params.worklist, this.props.params.task, this.save, this.saveCallback);
   }
 
   renderResponse(data) {

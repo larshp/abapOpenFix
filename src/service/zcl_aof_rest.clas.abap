@@ -21,7 +21,7 @@ public section.
       !IV_TASK type ZAOF_TASK
       !IS_DATA type ZAOF_RUN_DATA
     returning
-      value(RV_RESULT) type I .
+      value(RS_DATA) type ZAOF_SAVE_DATA .
   methods RUN_TASK
     importing
       !IV_WORKLIST type ZAOF_WORKLIST
@@ -75,18 +75,28 @@ CLASS ZCL_AOF_REST IMPLEMENTATION.
 
   METHOD run_task.
 
-    rs_data = zcl_aof_task=>run(
-      iv_worklist = iv_worklist
-      iv_task     = iv_task ).
+    DATA: lo_task TYPE REF TO zcl_aof_task.
+
+    CREATE OBJECT lo_task
+      EXPORTING
+        iv_worklist = iv_worklist
+        iv_task     = iv_task.
+
+    rs_data = lo_task->run( ).
 
   ENDMETHOD.
 
 
   METHOD save_task.
 
-    BREAK-POINT.
+    DATA: lo_task TYPE REF TO zcl_aof_task.
 
-    rv_result = 666.
+    CREATE OBJECT lo_task
+      EXPORTING
+        iv_worklist = iv_worklist
+        iv_task     = iv_task.
+
+    rs_data = lo_task->save( is_data ).
 
   ENDMETHOD.
 

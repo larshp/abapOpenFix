@@ -4,12 +4,18 @@ class ZCL_AOF_TASK definition
 
 public section.
 
-  class-methods RUN
-    importing
-      !IV_WORKLIST type ZAOF_WORKLIST
-      !IV_TASK type ZAOF_TASK
+  methods RUN
     returning
       value(RS_DATA) type ZAOF_RUN_DATA .
+  methods SAVE
+    importing
+      !IS_DATA type ZAOF_RUN_DATA
+    returning
+      value(RS_DATA) type ZAOF_SAVE_DATA .
+  methods CONSTRUCTOR
+    importing
+      !IV_WORKLIST type ZAOF_WORKLIST
+      !IV_TASK type ZAOF_TASK .
 protected section.
 
   class-methods FILL_DATA
@@ -25,11 +31,22 @@ protected section.
     returning
       value(RT_SOURCE) type STRING_TABLE .
 private section.
+
+  data MV_WORKLIST type ZAOF_WORKLIST .
+  data MV_TASK type ZAOF_TASK .
 ENDCLASS.
 
 
 
 CLASS ZCL_AOF_TASK IMPLEMENTATION.
+
+
+  METHOD constructor.
+
+    mv_worklist = iv_worklist.
+    mv_task     = iv_task.
+
+  ENDMETHOD.
 
 
   METHOD fill_data.
@@ -107,8 +124,8 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
 
 
     SELECT SINGLE * FROM zaof_tasks INTO ls_task
-      WHERE worklist = iv_worklist
-      AND task = iv_task.
+      WHERE worklist = mv_worklist
+      AND task = mv_task.
     ASSERT sy-subrc = 0.
 
     lt_results = zcl_aof_code_inspector=>run_object(
@@ -130,6 +147,27 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
 
     CREATE OBJECT li_fixer TYPE (ls_task-fixer).
     rs_data = li_fixer->run( rs_data ).
+
+  ENDMETHOD.
+
+
+  METHOD save.
+
+    FIELD-SYMBOLS: <ls_change> LIKE LINE OF is_data-changes.
+
+
+    LOOP AT is_data-changes ASSIGNING <ls_change>.
+      ASSERT <ls_change>-sobjtype = 'PROG'.
+
+      IF <ls_change>-code_before <> <ls_change>-code_after.
+        zcl_aof_source_code=>update(
+          iv_name   = <ls_change>-sobjname
+          it_source = <ls_change>-code_after ).
+      ENDIF.
+    ENDLOOP.
+
+* todo, return result
+    rs_data-todo = 666.
 
   ENDMETHOD.
 ENDCLASS.
