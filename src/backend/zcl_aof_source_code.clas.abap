@@ -34,9 +34,7 @@ CLASS ZCL_AOF_SOURCE_CODE IMPLEMENTATION.
 *        unknown_objectclass = 3
 *        OTHERS              = 4.
 
-    INSERT REPORT iv_name FROM it_source STATE 'I'.
-
-* perform basic syntax check before activating?
+    INSERT REPORT iv_name FROM it_source.
 
   ENDMETHOD.
 ENDCLASS.

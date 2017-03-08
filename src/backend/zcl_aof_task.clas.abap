@@ -114,24 +114,30 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
 
 * todo, refactor?
 
-    DATA: lt_results TYPE scit_alvlist,
-          lt_final   TYPE scit_alvlist,
-          lv_class   TYPE seoclsname,
-          li_fixer   TYPE REF TO zif_aof_fixer,
-          ls_task    TYPE zaof_tasks.
+    DATA: lt_results  TYPE scit_alvlist,
+          lt_final    TYPE scit_alvlist,
+          lv_class    TYPE seoclsname,
+          li_fixer    TYPE REF TO zif_aof_fixer,
+          ls_task     TYPE zaof_tasks,
+          ls_worklist TYPE zaof_worklists.
 
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
 
+
+    SELECT SINGLE * FROM zaof_worklists INTO ls_worklist
+      WHERE worklist = mv_worklist.
+    ASSERT sy-subrc = 0.
 
     SELECT SINGLE * FROM zaof_tasks INTO ls_task
       WHERE worklist = mv_worklist
       AND task = mv_task.
     ASSERT sy-subrc = 0.
 
+* todo, optimize so it only runs 1 relevant check instead of all in variant
     lt_results = zcl_aof_code_inspector=>run_object(
-        iv_variant = 'ZHVAM' " todo
-        iv_objtype = ls_task-objtype
-        iv_objname = ls_task-objname ).
+      iv_variant = ls_worklist-check_variant
+      iv_objtype = ls_task-objtype
+      iv_objname = ls_task-objname ).
 
     LOOP AT lt_results ASSIGNING <ls_result> WHERE test = ls_task-test.
       lv_class = zcl_aof_fixers=>find_fixer( <ls_result> ).
