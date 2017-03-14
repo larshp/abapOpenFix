@@ -1,37 +1,41 @@
-class ZCL_AOF_REST definition
-  public
-  create public .
+CLASS zcl_aof_rest DEFINITION
+  PUBLIC
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces IF_HTTP_EXTENSION .
-  interfaces ZIF_SWAG_HANDLER .
+    INTERFACES if_http_extension .
+    INTERFACES zif_swag_handler .
 
-  methods LIST_TASKS
-    importing
-      !IV_WORKLIST type ZAOF_WORKLIST
-    returning
-      value(RT_LIST) type ZAOF_TASKS_TT .
-  methods LIST_WORKLISTS
-    returning
-      value(RT_LIST) type ZAOF_WORKLISTS_TT .
-  methods SAVE_TASK
-    importing
-      !IV_WORKLIST type ZAOF_WORKLIST
-      !IV_TASK type ZAOF_TASK
-      !IS_DATA type ZAOF_RUN_DATA
-    returning
-      value(RS_DATA) type ZAOF_SAVE_DATA .
-  methods RUN_TASK
-    importing
-      !IV_WORKLIST type ZAOF_WORKLIST
-      !IV_TASK type ZAOF_TASK
-    returning
-      value(RS_DATA) type ZAOF_RUN_DATA .
-PROTECTED SECTION.
+    METHODS list_tasks
+      IMPORTING
+        !iv_worklist   TYPE zaof_worklist
+      RETURNING
+        VALUE(rt_list) TYPE zaof_tasks_tt
+      RAISING
+        zcx_aof_error .
+    METHODS list_worklists
+      RETURNING
+        VALUE(rt_list) TYPE zaof_worklists_tt .
+    METHODS save_task
+      IMPORTING
+        !iv_worklist   TYPE zaof_worklist
+        !iv_task       TYPE zaof_task
+        !is_data       TYPE zaof_run_data
+      RETURNING
+        VALUE(rs_data) TYPE zaof_save_data .
+    METHODS run_task
+      IMPORTING
+        !iv_worklist   TYPE zaof_worklist
+        !iv_task       TYPE zaof_task
+      RETURNING
+        VALUE(rs_data) TYPE zaof_run_data
+      RAISING
+        zcx_aof_error .
+  PROTECTED SECTION.
 
-  CONSTANTS c_base TYPE string VALUE '/sap/zabapopenfix/rest' ##NO_TEXT.
-private section.
+    CONSTANTS c_base TYPE string VALUE '/sap/zabapopenfix/rest' ##NO_TEXT.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -51,12 +55,28 @@ CLASS ZCL_AOF_REST IMPLEMENTATION.
         iv_title  = 'abapOpenFix'.
     lo_swag->register( me ).
 
-    lo_swag->run( ).
+    TRY.
+        lo_swag->run( ).
+      CATCH zcx_aof_not_found.
+        server->response->set_cdata( '404, NOT FOUND' ).
+        server->response->set_status( code   = 404
+                                      reason = 'NOT FOUND' ).
+    ENDTRY.
 
   ENDMETHOD.
 
 
   METHOD list_tasks.
+
+    DATA: lv_worklist TYPE zaof_worklists-worklist.
+
+
+    SELECT SINGLE worklist FROM zaof_worklists
+      INTO lv_worklist
+      WHERE worklist = iv_worklist.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_aof_not_found.
+    ENDIF.
 
     SELECT * FROM zaof_tasks
       INTO TABLE rt_list

@@ -6,7 +6,9 @@ public section.
 
   methods RUN
     returning
-      value(RS_DATA) type ZAOF_RUN_DATA .
+      value(RS_DATA) type ZAOF_RUN_DATA
+    raising
+      ZCX_AOF_ERROR .
   methods SAVE
     importing
       !IS_DATA type ZAOF_RUN_DATA
@@ -55,9 +57,20 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
                    <ls_change> LIKE LINE OF rs_data-changes.
 
 
-    rs_data-objtype = is_task-objtype.
-    rs_data-objname = is_task-objname.
-    rs_data-results = it_results.
+    rs_data-worklist  = is_task-worklist.
+    rs_data-task      = is_task-task.
+    rs_data-objtype   = is_task-objtype.
+    rs_data-objname   = is_task-objname.
+    rs_data-results   = it_results.
+
+    rs_data-next_task = is_task-task + 1.
+    SELECT SINGLE task FROM zaof_tasks
+      INTO rs_data-next_task
+      WHERE worklist = is_task-worklist
+      AND task = rs_data-next_task.
+    IF sy-subrc <> 0.
+      CLEAR rs_data-next_task.
+    ENDIF.
 
     LOOP AT it_results ASSIGNING <ls_result>.
       rs_data-description = <ls_result>-description.
@@ -126,12 +139,16 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
 
     SELECT SINGLE * FROM zaof_worklists INTO ls_worklist
       WHERE worklist = mv_worklist.
-    ASSERT sy-subrc = 0.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_aof_not_found.
+    ENDIF.
 
     SELECT SINGLE * FROM zaof_tasks INTO ls_task
       WHERE worklist = mv_worklist
       AND task = mv_task.
-    ASSERT sy-subrc = 0.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_aof_not_found.
+    ENDIF.
 
 * todo, optimize so it only runs 1 relevant check instead of all in variant
     lt_results = zcl_aof_code_inspector=>run_object(
@@ -166,9 +183,11 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
       ASSERT <ls_change>-sobjtype = 'PROG'.
 
       IF <ls_change>-code_before <> <ls_change>-code_after.
-        zcl_aof_source_code=>update(
-          iv_name   = <ls_change>-sobjname
-          it_source = <ls_change>-code_after ).
+        APPEND LINES OF
+          zcl_aof_source_code=>update(
+            iv_name   = <ls_change>-sobjname
+            it_source = <ls_change>-code_after )
+          TO rs_data-errors.
       ENDIF.
     ENDLOOP.
 

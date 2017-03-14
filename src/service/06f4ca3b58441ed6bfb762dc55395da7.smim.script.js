@@ -104,14 +104,23 @@ class Editor extends React.Component {
 class Run extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {data: null};
-    REST.runTask(props.params.worklist, this.props.params.task, this.update.bind(this));
+    this.init(props); 
   }
 
   update(d) {
     this.setState({data: d});
     this.save = d;
   }
+
+  componentWillReceiveProps(props) {
+    this.init(props);
+  }
+
+  init(props) {
+    this.state = {data: null};
+    this.save = undefined;
+    REST.runTask(props.params.worklist, props.params.task, this.update.bind(this));
+  } 
 
   setCodeAfter(index, value) {
 // do not update the state, as this will cause child elements to re-render
@@ -127,21 +136,47 @@ class Run extends React.Component {
   }
 
   saveCallback(val) {
-    alert("save, todo, response: " + val);
+    if(val.ERRORS.length > 0) {
+      let html = val.ERRORS.reduce(function(acc, val) { 
+        return acc + val.LINE + ": &nbsp;" + val.MESSAGE + "<br />"; }, 
+        "");
+// todo, this is a workaround, should use React functionallity instead
+      document.getElementById("errors").innerHTML = html;
+    } else {
+      alert("save ok");
+    }
   }
 
-  save(e) {
+  saveClick(e) {
     e.preventDefault();
-    REST.saveTask(this.props.params.worklist, this.props.params.task, this.save, this.saveCallback);
+    REST.saveTask(this.props.params.worklist, 
+                  this.props.params.task, 
+                  this.save, 
+                  this.saveCallback.bind(this));
+  }
+
+  showNext(next) {
+    let url = "tasks/" + this.props.params.worklist + "/" + next;
+    if(next === "000000") {
+      return (<div></div>);
+    } else {
+      return (<div className="topright">
+        <h1><Link to={url}>Next</Link></h1>
+        </div>);
+    }
   }
 
   renderResponse(data) {
+
     return (<div>
       <h1>{data.OBJTYPE} {data.OBJNAME}</h1>
       <i>{data.DESCRIPTION}</i><br />
+      {this.showNext(data.NEXT_TASK)}
       <br />
+      <div id="errors" className="errors"></div>
+      <br/>
       {data.CHANGES.map(this.editor.bind(this))}
-      <div className="right"><h1><a href="#" onClick={this.save.bind(this)}>Save</a></h1></div>
+      <div className="right"><h1><a href="#" onClick={this.saveClick.bind(this)}>Save</a></h1></div>
       </div>);
   }
 
@@ -217,12 +252,23 @@ class WorklistList extends React.Component {
   } 
       
   render() {
+    let list = undefined;
+    if(this.state.data) {
+        if(this.state.data.length > 0) {
+          list = this.state.data.map(this.worklist);
+        } else {
+          list = "empty";
+        }
+    } else {
+        list = "loading";
+    }
+
     return (
       <div>
       <h1>abapOpenFix</h1>
       <br />
       <u>Worklists</u><br />
-      {this.state.data?this.state.data.map(this.worklist):"loading"}
+      {list}
       <br />
       <br />
       <a href={base + "/rest/swagger.html"}>swagger</a>
