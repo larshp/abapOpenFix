@@ -61,8 +61,7 @@ CLASS ZCL_AOF_SOURCE_CODE IMPLEMENTATION.
 *        unknown_objectclass = 3
 *        OTHERS              = 4.
 
-* todo
-*    INSERT REPORT iv_name FROM it_source.
+    INSERT REPORT iv_name FROM it_source.
 
   ENDMETHOD.
 ENDCLASS.

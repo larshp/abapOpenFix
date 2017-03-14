@@ -167,17 +167,28 @@ class Run extends React.Component {
   }
 
   renderResponse(data) {
-
-    return (<div>
+    let header = (<div>
       <h1>{data.OBJTYPE} {data.OBJNAME}</h1>
       <i>{data.DESCRIPTION}</i><br />
       {this.showNext(data.NEXT_TASK)}
-      <br />
-      <div id="errors" className="errors"></div>
-      <br/>
-      {data.CHANGES.map(this.editor.bind(this))}
-      <div className="right"><h1><a href="#" onClick={this.saveClick.bind(this)}>Save</a></h1></div>
       </div>);
+
+    if  (data.CHANGES.length === 0) {
+      return (<div>
+        {header}
+        <br />
+        <h1>all okay</h1>
+        </div>);
+    } else {
+      return (<div>
+        {header}
+        <br />
+        <div id="errors" className="errors"></div>
+        <br/>
+        {data.CHANGES.map(this.editor.bind(this))}
+        <div className="right"><h1><a href="#" onClick={this.saveClick.bind(this)}>Save</a></h1></div>
+        </div>);
+    }
   }
 
   render() {
