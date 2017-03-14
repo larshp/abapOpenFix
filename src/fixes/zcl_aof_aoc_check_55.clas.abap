@@ -1,4 +1,4 @@
-CLASS zcl_aof_aoc_check_30 DEFINITION
+CLASS zcl_aof_aoc_check_55 DEFINITION
   PUBLIC
   CREATE PUBLIC .
 
@@ -11,12 +11,14 @@ ENDCLASS.
 
 
 
-CLASS ZCL_AOF_AOC_CHECK_30 IMPLEMENTATION.
+CLASS ZCL_AOF_AOC_CHECK_55 IMPLEMENTATION.
 
 
   METHOD zif_aof_fixer~is_fixable.
 
-    rv_fixable = boolc( is_result-test = 'ZCL_AOC_CHECK_30' ).
+* todo
+    rv_fixable = abap_false.
+*    rv_fixable = boolc( is_result-test = 'ZCL_AOC_CHECK_55' ).
 
   ENDMETHOD.
 
@@ -24,7 +26,8 @@ CLASS ZCL_AOF_AOC_CHECK_30 IMPLEMENTATION.
   METHOD zif_aof_fixer~run.
 
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF rs_data-results,
-                   <ls_change> LIKE LINE OF rs_data-changes.
+                   <ls_change> LIKE LINE OF rs_data-changes,
+                   <lv_line>   LIKE LINE OF <ls_change>-code_after.
 
 
     rs_data = is_data.
@@ -40,8 +43,13 @@ CLASS ZCL_AOF_AOC_CHECK_30 IMPLEMENTATION.
                  sobjname = <ls_result>-sobjname.
       ASSERT sy-subrc = 0.
 
-* todo, extra validations that the line in fact only contains "EXPORTING"
-      DELETE <ls_change>-code_after INDEX <ls_result>-line.
+      READ TABLE <ls_change>-code_after ASSIGNING <lv_line> INDEX <ls_result>-line.
+      ASSERT sy-subrc = 0.
+
+      REPLACE FIRST OCCURRENCE OF 'DATA:' IN <lv_line> WITH `     `.
+
+* todo
+
     ENDLOOP.
 
   ENDMETHOD.

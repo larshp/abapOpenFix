@@ -27,12 +27,6 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD test01.
 
-    FIELD-SYMBOLS: <ls_result> LIKE LINE OF mt_results.
-
-
-    APPEND INITIAL LINE TO mt_results ASSIGNING <ls_result>.
-    <ls_result>-line = 4.
-
     APPEND 'CALL FUNCTION ''ZASDF''' TO mt_input.
     APPEND '  EXPORTING'             TO mt_input.
     APPEND '    A_WERKS = p_werks'   TO mt_input.
@@ -46,17 +40,11 @@ CLASS ltcl_test IMPLEMENTATION.
       ii_fixer    = mi_fixer
       it_input    = mt_input
       it_expected = mt_expected
-      it_results  = mt_results ).
+      iv_line     = 4 ).
 
   ENDMETHOD.
 
   METHOD test02.
-
-    FIELD-SYMBOLS: <ls_result> LIKE LINE OF mt_results.
-
-
-    APPEND INITIAL LINE TO mt_results ASSIGNING <ls_result>.
-    <ls_result>-line = 2.
 
     APPEND 'lo_object->method( p_werks' TO mt_input.
     APPEND '  ).'                       TO mt_input.
@@ -67,7 +55,7 @@ CLASS ltcl_test IMPLEMENTATION.
       ii_fixer    = mi_fixer
       it_input    = mt_input
       it_expected = mt_expected
-      it_results  = mt_results ).
+      iv_line     = 2 ).
 
   ENDMETHOD.
 

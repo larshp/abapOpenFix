@@ -10,7 +10,7 @@ CLASS zcl_aof_fixer_unit_test DEFINITION
         !ii_fixer    TYPE REF TO zif_aof_fixer
         !it_input    TYPE string_table
         !it_expected TYPE string_table
-        !it_results  TYPE scit_alvlist .
+        !iv_line     TYPE sci_line .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -25,10 +25,12 @@ CLASS ZCL_AOF_FIXER_UNIT_TEST IMPLEMENTATION.
     DATA: ls_result TYPE zaof_run_data,
           ls_data   TYPE zaof_run_data.
 
-    FIELD-SYMBOLS: <ls_change> LIKE LINE OF ls_data-changes.
+    FIELD-SYMBOLS: <ls_result> LIKE LINE OF ls_data-results,
+                   <ls_change> LIKE LINE OF ls_data-changes.
 
 
-    ls_data-results = it_results.
+    APPEND INITIAL LINE TO ls_data-results ASSIGNING <ls_result>.
+    <ls_result>-line = iv_line.
 
     APPEND INITIAL LINE TO ls_data-changes ASSIGNING <ls_change>.
     <ls_change>-code_before = it_input.

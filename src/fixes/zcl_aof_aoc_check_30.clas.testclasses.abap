@@ -23,11 +23,6 @@ CLASS ltcl_test IMPLEMENTATION.
           lt_results  TYPE scit_alvlist,
           lt_expected TYPE string_table.
 
-    FIELD-SYMBOLS: <ls_result> LIKE LINE OF lt_results.
-
-
-    APPEND INITIAL LINE TO lt_results ASSIGNING <ls_result>.
-    <ls_result>-line = 2.
 
     APPEND 'lx_error->to_fpm_error('          TO lt_input.
     APPEND '  EXPORTING'                      TO lt_input.
@@ -42,7 +37,7 @@ CLASS ltcl_test IMPLEMENTATION.
       ii_fixer    = mi_fixer
       it_input    = lt_input
       it_expected = lt_expected
-      it_results  = lt_results ).
+      iv_line     = 2 ).
 
   ENDMETHOD.
 
