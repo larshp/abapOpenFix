@@ -44,8 +44,10 @@ CLASS ZCL_AOF_AOC_CHECK_16 IMPLEMENTATION.
       ASSERT sy-subrc = 0.
 
 * todo, extra validations
-      READ TABLE <ls_change>-code_after INDEX <ls_result>-line - 1 INTO lv_before.
-      READ TABLE <ls_change>-code_after INDEX <ls_result>-line INTO lv_dot.
+      READ TABLE <ls_change>-code_after INDEX <ls_result>-line - 1
+        INTO lv_before.                                   "#EC CI_SUBRC
+      READ TABLE <ls_change>-code_after INDEX <ls_result>-line
+        INTO lv_dot.
       CONDENSE lv_dot.
       IF lv_dot = '.'.
         CONCATENATE lv_before lv_dot INTO lv_before.
