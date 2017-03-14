@@ -259,6 +259,8 @@ class WorklistList extends React.Component {
     return (
       <div>
       <Link to={"tasks/" + e.WORKLIST}>{e.DESCRIPTION}</Link><br />
+      &nbsp;&nbsp;Object set: {e.OBJECT_SET}<br />
+      &nbsp;&nbsp;Check variant: {e.CHECK_VARIANT}<br />
       </div>);
   } 
       
