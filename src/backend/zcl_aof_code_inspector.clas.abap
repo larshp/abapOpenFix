@@ -13,6 +13,7 @@ public section.
   class-methods RUN_OBJECT
     importing
       !IV_VARIANT type SCI_CHKV
+      !IV_TEST type SCI_CHK
       !IV_OBJTYPE type SCI_TYPID
       !IV_OBJNAME type SOBJ_NAME
     returning
@@ -39,6 +40,12 @@ protected section.
   class-methods GET_VARIANT
     importing
       !IV_VARIANT type SCI_CHKV
+    returning
+      value(RO_VARIANT) type ref to CL_CI_CHECKVARIANT .
+  class-methods GET_VARIANT_SINGLE_TEST
+    importing
+      !IV_VARIANT type SCI_CHKV
+      !IV_TEST type SCI_CHK
     returning
       value(RO_VARIANT) type ref to CL_CI_CHECKVARIANT .
   class-methods RESULTS
@@ -154,6 +161,45 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_variant_single_test.
+* Only run the IV_TEST from IV_VARIANT
+
+    DATA: lv_name TYPE sci_chkv.
+
+
+* variant must be global
+    cl_ci_checkvariant=>get_ref(
+      EXPORTING
+        p_user            = ''
+        p_name            = iv_variant
+      RECEIVING
+        p_ref             = ro_variant
+      EXCEPTIONS
+        chkv_not_exists   = 1
+        missing_parameter = 2
+        OTHERS            = 3 ).                          "#EC CI_SUBRC
+    ASSERT sy-subrc = 0.
+
+    lv_name = |AOF_{ sy-datum }{ sy-uzeit }|.
+
+    ro_variant->copy(
+      EXPORTING
+        p_user = ''
+        p_name = lv_name
+        p_text = 'ABAPOPENFIX'
+      IMPORTING
+        p_copiedref = ro_variant ).
+
+    DATA(lt_var) = ro_variant->variant.
+    DELETE lt_var WHERE testname <> iv_test.
+    ASSERT lines( lt_var ) = 1.
+    ro_variant->enter_change( ).
+*    ro_variant->set_variant( p_variant = lt_var ).
+    ro_variant->save( p_variant = lt_var ).
+
+  ENDMETHOD.
+
+
   METHOD results.
 
 * make sure sap note 2043027 is installed
@@ -200,8 +246,9 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
           lo_object_set TYPE REF TO cl_ci_objectset.
 
 
-* todo, only run for 1 test?
-    lo_variant = get_variant( iv_variant ).
+    lo_variant = get_variant_single_test(
+      iv_variant = iv_variant
+      iv_test    = iv_test ).
 
     lo_object_set = get_object_set_single(
       iv_objtype = iv_objtype
@@ -214,6 +261,7 @@ CLASS ZCL_AOF_CODE_INSPECTOR IMPLEMENTATION.
     rt_results = results( lo_ci ).
 
     lo_object_set->delete( ).
+    lo_variant->delete( ).
 
   ENDMETHOD.
 ENDCLASS.

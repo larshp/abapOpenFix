@@ -150,9 +150,9 @@ CLASS ZCL_AOF_TASK IMPLEMENTATION.
       RAISE EXCEPTION TYPE zcx_aof_not_found.
     ENDIF.
 
-* todo, optimize so it only runs 1 relevant check instead of all in variant
     lt_results = zcl_aof_code_inspector=>run_object(
       iv_variant = ls_worklist-check_variant
+      iv_test    = ls_task-test
       iv_objtype = ls_task-objtype
       iv_objname = ls_task-objname ).
 
