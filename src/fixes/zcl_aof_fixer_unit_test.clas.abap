@@ -1,16 +1,17 @@
-CLASS zcl_aof_fixer_unit_test DEFINITION
-  PUBLIC
-  CREATE PUBLIC
-  FOR TESTING .
+class ZCL_AOF_FIXER_UNIT_TEST definition
+  public
+  create public
+  for testing .
 
-  PUBLIC SECTION.
+public section.
 
-    CLASS-METHODS test
-      IMPORTING
-        !ii_fixer    TYPE REF TO zif_aof_fixer
-        !it_input    TYPE string_table
-        !it_expected TYPE string_table
-        !iv_line     TYPE sci_line .
+  class-methods TEST
+    importing
+      !II_FIXER type ref to ZIF_AOF_FIXER
+      !IT_INPUT type STRING_TABLE
+      !IT_EXPECTED type STRING_TABLE
+      !IV_LINE type SCI_LINE
+      !IV_PARAM1 type SYCHAR80 optional .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -30,7 +31,8 @@ CLASS ZCL_AOF_FIXER_UNIT_TEST IMPLEMENTATION.
 
 
     APPEND INITIAL LINE TO ls_data-results ASSIGNING <ls_result>.
-    <ls_result>-line = iv_line.
+    <ls_result>-line   = iv_line.
+    <ls_result>-param1 = iv_param1.
 
     APPEND INITIAL LINE TO ls_data-changes ASSIGNING <ls_change>.
     <ls_change>-code_before = it_input.

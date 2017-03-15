@@ -1,4 +1,4 @@
-class ZCL_AOF_AOC_CHECK_30 definition
+class ZCL_AOF_AOC_CHECK_43 definition
   public
   create public .
 
@@ -11,19 +11,19 @@ ENDCLASS.
 
 
 
-CLASS ZCL_AOF_AOC_CHECK_30 IMPLEMENTATION.
+CLASS ZCL_AOF_AOC_CHECK_43 IMPLEMENTATION.
 
 
   METHOD zif_aof_fixer~is_fixable.
 
-    rv_fixable = boolc( is_result-test = 'ZCL_AOC_CHECK_30' ).
+    rv_fixable = boolc( is_result-test = 'ZCL_AOC_CHECK_43' ).
 
   ENDMETHOD.
 
 
   METHOD zif_aof_fixer~run.
 
-    DATA: lv_code TYPE string.
+    DATA: lv_repl TYPE string.
 
     FIELD-SYMBOLS: <ls_result> LIKE LINE OF rs_data-results,
                    <lv_code>   TYPE string,
@@ -46,16 +46,13 @@ CLASS ZCL_AOF_AOC_CHECK_30 IMPLEMENTATION.
       READ TABLE <ls_change>-code_after INDEX <ls_result>-line ASSIGNING <lv_code>.
       ASSERT sy-subrc = 0.
 
-      lv_code = <lv_code>.
-      CONDENSE lv_code.
-      IF lv_code = 'EXPORTING' OR lv_code = 'exporting'.
-        DELETE <ls_change>-code_after INDEX <ls_result>-line.
-      ELSE.
-        REPLACE FIRST OCCURRENCE OF `EXPORTING ` IN <lv_code> WITH ''.
-        IF sy-subrc <> 0.
-          REPLACE FIRST OCCURRENCE OF `exporting ` IN <lv_code> WITH ''.
-        ENDIF.
+      lv_repl = to_upper( |{ <ls_result>-param1 } = | ).
+      REPLACE FIRST OCCURRENCE OF lv_repl IN <lv_code> WITH ''.
+      IF sy-subrc <> 0.
+        lv_repl = to_lower( lv_repl ).
+        REPLACE FIRST OCCURRENCE OF lv_repl IN <lv_code> WITH ''.
       ENDIF.
+
     ENDLOOP.
 
   ENDMETHOD.

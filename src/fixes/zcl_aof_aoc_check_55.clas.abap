@@ -1,10 +1,10 @@
-CLASS zcl_aof_aoc_check_55 DEFINITION
-  PUBLIC
-  CREATE PUBLIC .
+class ZCL_AOF_AOC_CHECK_55 definition
+  public
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES zif_aof_fixer .
+  interfaces ZIF_AOF_FIXER .
   PROTECTED SECTION.
 
     METHODS previous_to_comma
@@ -55,8 +55,7 @@ CLASS ZCL_AOF_AOC_CHECK_55 IMPLEMENTATION.
 
   METHOD remove_preceding_empty_lines.
 
-    DATA: lv_line   TYPE sci_line,
-          lv_length TYPE i.
+    DATA: lv_line TYPE sci_line.
 
     FIELD-SYMBOLS: <lv_code> LIKE LINE OF ct_code.
 

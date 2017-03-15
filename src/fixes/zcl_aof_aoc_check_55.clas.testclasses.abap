@@ -3,7 +3,6 @@ CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
   PRIVATE SECTION.
     DATA: mi_fixer    TYPE REF TO zif_aof_fixer,
           mt_input    TYPE string_table,
-          mt_results  TYPE scit_alvlist,
           mt_expected TYPE string_table.
 
     METHODS:
@@ -22,7 +21,6 @@ CLASS ltcl_test IMPLEMENTATION.
     CREATE OBJECT mi_fixer TYPE zcl_aof_aoc_check_55.
 
     CLEAR mt_input.
-    CLEAR mt_results.
     CLEAR mt_expected.
 
   ENDMETHOD.

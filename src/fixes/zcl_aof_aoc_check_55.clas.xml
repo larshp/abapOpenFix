@@ -6,7 +6,7 @@
     <CLSNAME>ZCL_AOF_AOC_CHECK_55</CLSNAME>
     <VERSION>1</VERSION>
     <LANGU>E</LANGU>
-    <DESCRIPT>Fix for abapOpenChecks 55</DESCRIPT>
+    <DESCRIPT>Fix for abapOpenChecks 55 - Statements can be chained</DESCRIPT>
     <EXPOSURE>2</EXPOSURE>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
